@@ -1,0 +1,62 @@
+{% set enable_modal_register = True %}
+{% extends "base.html" %}
+
+{% block import_CSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Stellar and Planetary Data</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Planet Name</th>
+                        <th>Discovery Method</th>
+                        <th>Discovery Year</th>
+                        <th>Discovery Facility</th>
+                        <th>Host Star</th>
+                        <th>Host Star Distance(pc)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in planet_data %}
+                    <tr>
+                        <td>{{ p.pl_name }}</td>
+                        <td>{{ p.discoverymethod or '' }}</td>
+                        <td>{{ p.disc_year or '' }}</td>
+                        <td>{{ p.disc_facility or '' }}</td>
+                        <td>{{ p.host_star or '' }}</td>
+                        <td>{{ p.sy_dist or '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if pagination.pages > 1 %}
+        <nav aria-label="Planet Table Pagination">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ pagination.page - 1 }}" tabindex="-1">Previous</a>
+                </li>
+                {% set last = 0 %}
+                {% for p in range(1, pagination.pages + 1) %}
+                    {% if p == 1 or p == pagination.pages or (p >= pagination.page - 2 and p <= pagination.page + 2) %}
+                        {% if last and p - last > 1 %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                        <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        </li>
+                        {% set last = p %}
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ pagination.page + 1 }}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+{% endblock %}
