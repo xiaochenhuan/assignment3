@@ -11,7 +11,7 @@ DEFAULT_CSV = os.path.join(os.path.dirname(__file__), 'PSCompPars_2025.05.08_13.
 
 def import_csv(csv_path=DEFAULT_CSV):
     with app.app_context():
-        db.create_all()  # 自动建表
+        db.create_all()  # Auto create tables
         success_count = 0
         fail_count = 0
         with open(csv_path, newline='', encoding='utf-8') as csvfile:
@@ -20,7 +20,7 @@ def import_csv(csv_path=DEFAULT_CSV):
             for idx, row in enumerate(reader, 1):
                 try:
                     hostname = row['hostname'].strip()
-                    # 先查找或创建 HostStar
+                    # First, find or create HostStar
                     if hostname in host_star_cache:
                         host_star = host_star_cache[hostname]
                     else:
@@ -36,7 +36,7 @@ def import_csv(csv_path=DEFAULT_CSV):
                             db.session.add(host_star)
                             db.session.flush()  # 获取 id
                         host_star_cache[hostname] = host_star
-                    # 插入 Planet
+                    # Insert Planet
                     planet = Planet(
                         pl_name=row['pl_name'],
                         discoverymethod=row['discoverymethod'],
@@ -47,10 +47,10 @@ def import_csv(csv_path=DEFAULT_CSV):
                     db.session.add(planet)
                     success_count += 1
                 except Exception as e:
-                    print(f"[第{idx}行] 导入失败: {e}\n数据: {row}")
+                    print(f"[Row {idx}] Import failed: {e}\nData: {row}")
                     fail_count += 1
             db.session.commit()
-        print(f'CSV 导入完成: 成功 {success_count} 条, 失败 {fail_count} 条')
+        print(f'CSV import completed: Success {success_count}, Failed {fail_count}')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Import planet CSV data into the database.')
