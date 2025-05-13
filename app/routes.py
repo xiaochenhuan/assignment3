@@ -14,7 +14,7 @@ api_bp = Blueprint('api', __name__)
 
 @api_bp.route('/', methods=['GET', 'POST'])
 def index():
-    # 分页参数
+    # Pagination parameters
     try:
         page = int(request.args.get('page', 1))
         if page < 1:
@@ -22,7 +22,7 @@ def index():
     except Exception:
         page = 1
     per_page = 20
-    # 查询带分页的行星及主星信息
+    # Query planets and host stars with pagination
     query = db.session.query(Planet, HostStar).join(HostStar, Planet.host_star_id == HostStar.id)
     total = query.count()
     planets = query.offset((page - 1) * per_page).limit(per_page).all()
@@ -37,7 +37,7 @@ def index():
         }
         for p, h in planets
     ]
-    # 分页信息
+    # Pagination info
     pagination = {
         'page': page,
         'per_page': per_page,
